@@ -1,13 +1,8 @@
 <?php
 
 $url = "https://demonegocios.buzonfiscal.com/bfcorpcfdiws?wsdl";
-//archivo del kit
-//$url = "files/cancela/CorporativoWS3.0.wsdl";
 $cert = "keys/AAA010101AAA_2014.pem";
 $passphrase = "AAA010101AAA";
-
-//$opts = array('ssl' => array('ciphers'=> 'TLSv1', 'allow_self_signed' => true, "cafile"=>"keys/20001000000100003992.pem"));
-
 
 class ABRSoapClient extends SoapClient {
 
@@ -35,10 +30,7 @@ try {
 						'soap_version'   => SOAP_1_1,
 						'style'    => SOAP_DOCUMENT,
 						"encoding"=>"UTF-8","exceptions" => 0,
-						//'stream_context' => stream_context_create($opts),
-						"connection_timeout"=>1000
-						
-						
+						"connection_timeout"=>1000						
 	));
 	
 	$data = new XMLWriter();
@@ -62,7 +54,6 @@ try {
 }
 
 print "<pre>\n";
-//print "<br />\n Request : ".htmlspecialchars($client->__getLastRequest());
 print "<br />\n Response: ".htmlspecialchars($client->__getLastResponse());
 print "</pre>";
 

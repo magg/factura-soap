@@ -1,20 +1,4 @@
 <?php
-class MTOMSoapClient extends SoapClient {
-	public function __doRequest($request, $location, $action, $version, $one_way = 0) {
-		$response = parent::__doRequest($request, $location, $action, $version, $one_way);
-		//if resposnse content type is mtom strip away everything but the xml.
-		if (strpos($response, "Content-Type: application/xop+xml") !== false) {
-			//not using stristr function twice because not supported in php 5.2 as shown below
-			//$response = stristr(stristr($response, "<s:"), "</s:Envelope>", true) . "</s:Envelope>";
-			$tempstr = stristr($response, "<s:");
-			$response = substr($tempstr, 0, strpos($tempstr, "</s:Envelope>")) . "</s:Envelope>";
-		}
-		//log_message($response);
-		return $response;
-	}
- 
-}
-
 
 class ABRSoapClient extends SoapClient {
 
@@ -42,41 +26,23 @@ class ABRSoapClient extends SoapClient {
     }
 }
 
-//$url = "files/envio/TimbradoCFDI.wsdl";
 $url = "https://demotf.buzonfiscal.com/timbrado?wsdl";
-//$cert = "keys/prueba.pem";
 $cert = "keys/AAA010101AAA_2014.pem";
-//$passphrase = "12345678a";
 $passphrase = "AAA010101AAA";
 $xml = file_get_contents('AAA010101AAA_FAC_62e8_20120108.xml');
-//$xml = file_get_contents('coding.xml');
-
-//$opts = array('ssl' => array('ciphers'=> 'TLSv1', 'allow_self_signed' => true, "cafile"=>"keys/20001000000100003992.pem"));
-
 
 try {	
 	
 	$client = new ABRSoapClient($url, array(
 						'trace' => 1, 
 						'wsdl_cache' => 0,
-						//'location' => "https://demotf.buzonfiscal.com/timbrado",
 						'soap_version'   => SOAP_1_1,
 						'style'    => SOAP_DOCUMENT,
 						'local_cert' => $cert,
 						'passphrase'=>$passphrase,
 						"encoding"=>"UTF-8","exceptions" => 0,
-						//'stream_context' => stream_context_create($opts),
 						"connection_timeout"=>1000));
 						
-	
-
-	//var_dump($client->__getFunctions()); 
-	
-//	$params = array("RequestTimbradoCFD" => array(
-//		"RefID"=>"COD0109-MTZ-EP29112-0309",
-//		array("Documento" => array("Archivo" =>  base64_encode($xml), "Tipo" => "XML")),
-//		array("InfoBasica" => array("RfcReceptor" => "DIA031002LZ2", "RfcEmisor" => "AAA010101AAA"))
-//	));	
 	
 	$data = new XMLWriter();
   	$data->openMemory();
@@ -105,12 +71,10 @@ try {
 	   
  } catch (Exception $e) {
             echo "<h2>Exception Error!</h2>";
-            //echo $e->getMessage();
 			var_dump($e->getMessage());
 }
 
 	print "<pre>\n";
-    //print "<br />\n Request : ".htmlspecialchars($client->__getLastRequest());
     print "<br />\n Response: ".htmlspecialchars($client->__getLastResponse());
     print "</pre>";
 
