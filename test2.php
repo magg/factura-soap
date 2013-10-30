@@ -1,7 +1,8 @@
 <?php
 
-//$url = "https://demonegocios.buzonfiscal.com/bfcorpcfdiws?wsdl";
-$url = "files/cancela/CorporativoWS3.0.wsdl";
+$url = "https://demonegocios.buzonfiscal.com/bfcorpcfdiws?wsdl";
+//archivo del kit
+//$url = "files/cancela/CorporativoWS3.0.wsdl";
 $cert = "keys/AAA010101AAA_2014.pem";
 $passphrase = "AAA010101AAA";
 
