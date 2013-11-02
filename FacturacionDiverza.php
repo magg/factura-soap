@@ -81,6 +81,7 @@ class FacturacionDiverza {
 	public $passphrase;
 	public $rfcreceptor;
 	public $rfcemisor;
+	public $UUID;
 	
 	public function __construct($url, $cert, $pass, $debug = 0) {
 	    $GLOBALS['debug_diverza'] = (int) $debug;
@@ -104,6 +105,11 @@ class FacturacionDiverza {
 					"encoding"=>"UTF-8","exceptions" => 0,
 					"connection_timeout"=>1000));
 
+
+			//esto no debe de ir
+			$this->rfcemisor = "AAA010101AAA";
+			$this->rfcreceptor = "DIA031002LZ2";
+			
 			$data = new XMLWriter();
 		  	$data->openMemory();
 		  	$data->startElementNS('tim', 'RequestTimbradoCFD', NULL);
@@ -152,7 +158,8 @@ class FacturacionDiverza {
 						'style'    => SOAP_DOCUMENT,
 						"encoding"=>"UTF-8","exceptions" => 0,
 						"connection_timeout"=>1000));
-
+			
+			//esto no debe de ir
 			$this->rfcemisor = "AAA010101AAA";
 			$this->rfcreceptor = "DIA031002LZ2";
 						
