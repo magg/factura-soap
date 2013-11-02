@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.buzonfiscal.com/ns/xsd/bf/TimbradoCFD"
+    elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:bftmb="http://www.buzonfiscal.com/ns/xsd/bf/TimbradoCFD"
+    xmlns:Q1="http://www.buzonfiscal.com/ns/referenceID/v1"
+    xmlns:Q2="http://www.buzonfiscal.com/ns/xsd/bf/RequestTimbraCFDI"
+    xmlns:Q3="http://www.sat.gob.mx/cfd/3" xmlns:Q4="http://www.sat.gob.mx/TimbreFiscalDigital">
+
+
+    <import schemaLocation="TimbreFiscalDigital.xsd"
+        namespace="http://www.sat.gob.mx/TimbreFiscalDigital"/>
+
+    <import schemaLocation="RequestTimbraCFDI.xsd"
+        namespace="http://www.buzonfiscal.com/ns/xsd/bf/RequestTimbraCFDI"/>
+    <import schemaLocation="RefIDv1.0.xsd" namespace="http://www.buzonfiscal.com/ns/referenceID/v1"/>
+    <complexType name="RequestTimbradoCFDType">
+        <sequence>
+            <element ref="Q2:Documento" minOccurs="0" maxOccurs="1"/>
+
+            <element ref="Q2:InfoBasica" minOccurs="1" maxOccurs="1"/>
+            <element name="InfoAdicional" type="Q2:InfoAdicionalType" minOccurs="0" maxOccurs="10"/>
+        </sequence>
+        <attribute ref="Q2:RefID"/>
+    </complexType>
+
+
+
+    <element name="RequestTimbradoCFD" type="bftmb:RequestTimbradoCFDType"/>
+
+
+</schema>

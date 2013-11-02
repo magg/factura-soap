@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.buzonfiscal.com/ns/xsd/bf/RequestTimbraCFDI"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:bfrecpxsd="http://www.buzonfiscal.com/ns/xsd/bf/RequestTimbraCFDI"
+	xmlns:Q1="http://www.buzonfiscal.com/ns/referenceID/v1">
+
+	<import schemaLocation="RefIDv1.0.xsd" namespace="http://www.buzonfiscal.com/ns/referenceID/v1"> </import>
+
+
+	<attribute name="RefID" type="Q1:refIDType"/>
+
+	<complexType name="DocumentoType">
+		<attribute name="Archivo" type="base64Binary" use="required"/>
+		<attribute name="NombreArchivo" type="string" use="optional"/>
+		<attribute name="Tipo" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="ZIP"/>
+					<enumeration value="XML"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="Version" type="string" use="required" fixed="3.2"/>
+	</complexType>
+
+	<element name="Documento" type="bfrecpxsd:DocumentoType"/>
+
+	<complexType name="InfoBasicaType">
+		<attribute name="RfcEmisor" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="12"/>
+					<maxLength value="13"/>
+					<whiteSpace value="collapse"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="RfcReceptor" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="12"/>
+					<maxLength value="13"/>
+					<whiteSpace value="collapse"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="Serie" type="string"/>
+	</complexType>
+
+	<element name="InfoBasica" type="bfrecpxsd:InfoBasicaType"/>
+
+	<complexType name="InfoAdicionalType">
+		<attribute name="Atributo" type="string" use="required"/>
+		<attribute name="Valor" type="string" use="required"/>
+	</complexType>
+
+	<element name="InfoAdicional" type="bfrecpxsd:InfoAdicionalType"/>
+
+
+
+
+
+</schema>
