@@ -83,6 +83,7 @@ class FacturacionDiverza {
 	public $rfcemisor;
 	public $UUID;
 	public $server_code; // success = 0, failed = 18, repeated = 19
+	public $server_fault;
 	
 	public function __construct($url, $cert, $pass, $debug = 0) {
 	    $GLOBALS['debug_diverza'] = (int) $debug;
@@ -133,6 +134,12 @@ class FacturacionDiverza {
 
 			//Get reponse from WS
 			$response = $client->__soapCall("timbradoCFD", array($args));
+
+			if (array_key_exists("faultstring",$response)){
+				$this->server_fault = $response->faultstring;
+			} else{
+				$this->UUID = $response->TimbreFiscalDigital->UUID;
+			}
 
 		 } catch (Exception $e) {
 		            echo "<h2>Exception Error!</h2>";
