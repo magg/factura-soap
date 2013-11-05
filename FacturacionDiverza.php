@@ -82,6 +82,7 @@ class FacturacionDiverza {
 	public $rfcreceptor;
 	public $rfcemisor;
 	public $UUID;
+	public $server_code; // success = 0, failed = 18, repeated = 19
 	
 	public function __construct($url, $cert, $pass, $debug = 0) {
 	    $GLOBALS['debug_diverza'] = (int) $debug;
@@ -177,6 +178,8 @@ class FacturacionDiverza {
 
 			//Get reponse from WS
 			$response = $client->__soapCall("cancelaCFDi", array($args));
+			
+			$this->server_code = $response->Result->Message->code;
 
 		 } catch (Exception $e) {
 		            echo "<h2>Exception Error!</h2>";
