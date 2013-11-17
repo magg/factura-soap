@@ -17,7 +17,6 @@ class TimbrarSoapClient extends SoapClient {
 		$request = preg_replace("/xmlns:ns1=/", "xmlns:req=", $request);
 		$request = preg_replace("/\/TimbradoCFD\"\s/", "/RequestTimbraCFDI\" ", $request );
 		
-		
 		if($GLOBALS['debug_diverza'] == 1){
 			$this->log("SOAP request:\t".$request);
 		    //$this->log("SOAP response:\t".$client->__getLastResponse());
@@ -81,15 +80,17 @@ class FacturacionDiverza {
 	public $passphrase;
 	public $rfcreceptor;
 	public $rfcemisor;
-	public $UUID;
+	public $uuid;
 	public $server_code; // success = 0, failed = 18, repeated = 19
 	public $server_fault;
+	public $xmlFile;
 	
-	public function __construct($url, $cert, $pass, $debug = 0) {
+	public function __construct($url, $cert, $pass, $debug = 0, $file) {
 	    $GLOBALS['debug_diverza'] = (int) $debug;
 	    $this->url = $url;     
 		$this->cert = $cert;
 		$this->passphrase = $pass;
+		$this->xmlFile = simplexml_load_file("$file");
 	}
 	
 	
@@ -106,11 +107,25 @@ class FacturacionDiverza {
 					'passphrase'=>$this->passphrase,
 					"encoding"=>"UTF-8","exceptions" => 0,
 					"connection_timeout"=>1000));
+		
+			//Get all namepaces in the XML
+			$ns = $this->xmlFile->getNamespaces(true);
 
+			//Get all childrens with CDFI namespace
+			$cf = $this->xmlFile->children($ns["cfdi"]);
+
+			//Node Emisor
+			$emisor = $cf->Emisor;
+
+			//Node Receptor
+			$receptor = $cf->Receptor;
+
+			//Complemento with namespace TFD
+			$complemento = $cf->Complemento->children($ns["tfd"]);
 
 			//esto no debe de ir
-			$this->rfcemisor = "AAA010101AAA";
-			$this->rfcreceptor = "DIA031002LZ2";
+			$this->rfcemisor = $this->getAttributes($emisor,'rfc');
+			$this->rfcreceptor = $this->getAttributes($receptor,'rfc');
 			
 			$data = new XMLWriter();
 		  	$data->openMemory();
@@ -138,7 +153,7 @@ class FacturacionDiverza {
 			if (array_key_exists("faultstring",$response)){
 				$this->server_fault = $response->faultstring;
 			} else{
-				$this->UUID = $response->TimbreFiscalDigital->UUID;
+				$this->uuid = $response->TimbreFiscalDigital->uuid;
 			}
 
 		 } catch (Exception $e) {
@@ -167,10 +182,25 @@ class FacturacionDiverza {
 						"encoding"=>"UTF-8","exceptions" => 0,
 						"connection_timeout"=>1000));
 			
+			//Get all namepaces in the XML
+			$ns = $this->xmlFile->getNamespaces(true);
+
+			//Get all childrens with CDFI namespace
+			$cf = $this->xmlFile->children($ns["cfdi"]);
+
+			//Node Emisor
+			$emisor = $cf->Emisor;
+
+			//Node Receptor
+			$receptor = $cf->Receptor;
+
+			//Complemento with namespace TFD
+			$complemento = $cf->Complemento->children($ns["tfd"]);
+
 			//esto no debe de ir
-			$this->rfcemisor = "AAA010101AAA";
-			$this->rfcreceptor = "DIA031002LZ2";
-						
+			$this->rfcemisor = $this->getAttributes($emisor,'rfc');
+			$this->rfcreceptor = $this->getAttributes($receptor,'rfc');
+			$this->uuid = getAttributes($complemento, "UUID");	
 
 			$data = new XMLWriter();
 		  	$data->openMemory();
@@ -209,11 +239,21 @@ class FacturacionDiverza {
 	* @param $str
 	* @return void
 	*/
-	  private function log($str){
-	    $f = fopen($this->log, 'a');
+	private function log($str){
+		$f = fopen($this->log, 'a');
 	    fwrite($f, date('c')."\t".$str."\n\n");
 	    fclose($f);
-	  }
+	}
+	  
+	private function getAttributes($node, $name) {
+		foreach($node as $attr) {
+			foreach($attr->attributes() as $key => $value) {
+				if ((string) $key == $name) {
+    				return $value;
+    			}
+			}
+		}
+	}
 		
 }
 ?>

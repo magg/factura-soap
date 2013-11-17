@@ -14,11 +14,9 @@ function pruebaTimbrado(){
 	$cert = "keys/AAA010101AAA_2014.pem";
 	$pass= "AAA010101AAA";
 	$xml = file_get_contents('AAA010101AAA_FAC_62e8_20120108.xml');	
+	$file = "AAA010101AAA_FAC_62e8_20120108.xml";
 	
-	
-	$cliente = new FacturacionDiverza($url, $cert, $pass, $debug);
-	
-	
+	$cliente = new FacturacionDiverza($url, $cert, $pass, $debug, $file);
 	$cliente->timbrar($xml, "COD0109-MTZ-EP29112-0309");
 	
 }
