@@ -96,11 +96,10 @@ class FacturacionDiverza {
 	public $rfcemisor;
 	public $uuid;
 	public $server_code; // success = 0, failed = 18, repeated = 19
-	public $server_code; 
 	public $server_fault;
 	public $xmlFile;
+	public $xmlString;
 	
-	public function __construct($url, $cert, $pass, $debug = 0, $file) {
 	/**
 	* Crea el objeto de conexión con la API de Facturación de Diverza, para
 	* acceder a los métodos de timbrado y cancelación de CFDI.
@@ -110,12 +109,13 @@ class FacturacionDiverza {
 	* @param string $pass
 	* @param boolean $debug
 	*/
-	public function __construct($url, $cert, $pass, $debug = 0) {
+	public function __construct($url, $cert, $pass, $debug = 0, $file) {
 	    $GLOBALS['debug_diverza'] = (int) $debug;
 	    $this->url = $url;     
 		$this->cert = $cert;
 		$this->passphrase = $pass;
 		$this->xmlFile = simplexml_load_file("$file");
+		$this->xmlString = file_get_contents($file);	
 	}
 	
 	
@@ -140,7 +140,7 @@ class FacturacionDiverza {
 	* @param string $refid Identifcador único de control para Diverza
 	* 
 	*/
-	public function timbrar($factura,$refid){
+	public function timbrar($refid){
 	
 		try {	
 
@@ -154,6 +154,14 @@ class FacturacionDiverza {
 					"encoding"=>"UTF-8","exceptions" => 0,
 					"connection_timeout"=>1000));
 		
+			// usar esto? o version de evarush?
+			$this->xmlFile->registerXPathNamespace("cfdi", "http://www.sat.gob.mx/cfd/3");
+			$rfc1 = $this->xmlFile->xpath('//cfdi:Emisor/@rfc');
+			$rfc2 = $this->xmlFile->xpath('//cfdi:Receptor/@rfc');
+			$emi = (string) $rfc1[0]['rfc'];
+			echo $emi;
+		
+			// codigo evarush
 			//Get all namepaces in the XML
 			$ns = $this->xmlFile->getNamespaces(true);
 
@@ -180,7 +188,7 @@ class FacturacionDiverza {
 		    // Send NULL to not specify the NameSpace on every call.
 		    $data->startElementNS('req','Documento', NULL);
 		    //Attribute on a Namespaced node!
-		    $data->writeAttribute('Archivo',  base64_encode($factura) );
+		    $data->writeAttribute('Archivo',  base64_encode($this->xmlString) );
 		    $data->writeAttribute('Tipo',  "XML" );
 		    $data->writeAttribute('Version',  "3.2" );
 			$data->endElement();
